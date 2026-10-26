@@ -1,0 +1,4 @@
+2.9.1+cu126 Tesla V100-PCIE-32GB
+wine seed=42 fixed: silhouette=0.4817288815975189, ARI=0.7558
+wine seed=42 no_guidance: silhouette=0.4819734990596771, ARI=0.7558
+Saved /share/vast/dwunsch-lab/Thomas/FuzzyICVIProject/adapative_gating_research/experiment_1/runs/wine/seed-42/summary.json

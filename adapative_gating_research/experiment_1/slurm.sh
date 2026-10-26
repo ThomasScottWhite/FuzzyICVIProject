@@ -19,8 +19,7 @@ task=${SLURM_ARRAY_TASK_ID:?Submit this script with sbatch}
 dataset=${datasets[$((task / ${#seeds[@]}))]}
 seed=${seeds[$((task % ${#seeds[@]}))]}
 
-project_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
-cd "$project_root"
+cd "$SLURM_SUBMIT_DIR"
 module load anaconda
 eval "$(conda shell.bash hook)"
 conda activate fuzzyicvi

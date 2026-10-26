@@ -1,0 +1,4 @@
+2.9.1+cu126 Tesla V100-PCIE-32GB
+iris seed=44 fixed: silhouette=0.5321869850158691, ARI=0.6525
+iris seed=44 no_guidance: silhouette=0.5321725010871887, ARI=0.6525
+Saved /share/vast/dwunsch-lab/Thomas/FuzzyICVIProject/adapative_gating_research/experiment_1/runs/iris/seed-44/summary.json

@@ -1,0 +1,95 @@
+2.9.1+cu126 Tesla V100-PCIE-32GB
+/home/tsw96d/.conda/envs/fuzzyicvi/lib/python3.11/site-packages/sklearn/datasets/_openml.py:95: RuntimeWarning: Invalid cache, redownloading file to /share/vast/dwunsch-lab/Thomas/FuzzyICVIProject/data/cache/openml/openml.org/data/v1/download/18238735/Fashion-MNIST.arff.gz
+  warn(
+Traceback (most recent call last):
+  File "/home/tsw96d/.conda/envs/fuzzyicvi/lib/python3.11/site-packages/sklearn/datasets/_openml.py", line 80, in wrapper
+    return f(*args, **kw)
+           ^^^^^^^^^^^^^^
+  File "/home/tsw96d/.conda/envs/fuzzyicvi/lib/python3.11/site-packages/sklearn/datasets/_openml.py", line 580, in _load_arff_response
+    X, y, frame, categories = _open_url_and_load_gzip_file(
+                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/tsw96d/.conda/envs/fuzzyicvi/lib/python3.11/site-packages/sklearn/datasets/_openml.py", line 568, in _open_url_and_load_gzip_file
+    return load_arff_from_gzip_file(gzip_file, **arff_params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/tsw96d/.conda/envs/fuzzyicvi/lib/python3.11/site-packages/sklearn/datasets/_arff_parser.py", line 533, in load_arff_from_gzip_file
+    return _pandas_arff_parser(
+           ^^^^^^^^^^^^^^^^^^^^
+  File "/home/tsw96d/.conda/envs/fuzzyicvi/lib/python3.11/site-packages/sklearn/datasets/_arff_parser.py", line 447, in _pandas_arff_parser
+    frame[col] = frame[col].cat.rename_categories(strip_single_quotes)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/tsw96d/.conda/envs/fuzzyicvi/lib/python3.11/site-packages/pandas/core/accessor.py", line 128, in f
+    return self._delegate_method(name, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/tsw96d/.conda/envs/fuzzyicvi/lib/python3.11/site-packages/pandas/core/arrays/categorical.py", line 3253, in _delegate_method
+    res = method(*args, **kwargs)
+          ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/tsw96d/.conda/envs/fuzzyicvi/lib/python3.11/site-packages/pandas/core/arrays/categorical.py", line 1431, in rename_categories
+    new_categories = [new_categories(item) for item in self.categories]
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/tsw96d/.conda/envs/fuzzyicvi/lib/python3.11/site-packages/pandas/core/arrays/categorical.py", line 1431, in <listcomp>
+    new_categories = [new_categories(item) for item in self.categories]
+                      ^^^^^^^^^^^^^^^^^^^^
+  File "/home/tsw96d/.conda/envs/fuzzyicvi/lib/python3.11/site-packages/sklearn/datasets/_arff_parser.py", line 435, in strip_single_quotes
+    match = re.search(single_quote_pattern, input_string)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/tsw96d/.conda/envs/fuzzyicvi/lib/python3.11/re/__init__.py", line 176, in search
+    return _compile(pattern, flags).search(string)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: expected string or bytes-like object, got 'int'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/share/vast/dwunsch-lab/Thomas/FuzzyICVIProject/adapative_gating_research/experiment_1/run.py", line 124, in <module>
+    main()
+  File "/share/vast/dwunsch-lab/Thomas/FuzzyICVIProject/adapative_gating_research/experiment_1/run.py", line 67, in main
+    data = load_dataset(args.dataset, data_home=args.data_home)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/share/vast/dwunsch-lab/Thomas/FuzzyICVIProject/dmsc_custom/data.py", line 85, in load_dataset
+    raw = fetch_openml(
+          ^^^^^^^^^^^^^
+  File "/home/tsw96d/.conda/envs/fuzzyicvi/lib/python3.11/site-packages/sklearn/utils/_param_validation.py", line 218, in wrapper
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/tsw96d/.conda/envs/fuzzyicvi/lib/python3.11/site-packages/sklearn/datasets/_openml.py", line 1161, in fetch_openml
+    bunch = _download_data_to_bunch(
+            ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/tsw96d/.conda/envs/fuzzyicvi/lib/python3.11/site-packages/sklearn/datasets/_openml.py", line 715, in _download_data_to_bunch
+    X, y, frame, categories = _retry_with_clean_cache(
+                              ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/tsw96d/.conda/envs/fuzzyicvi/lib/python3.11/site-packages/sklearn/datasets/_openml.py", line 100, in wrapper
+    return f(*args, **kw)
+           ^^^^^^^^^^^^^^
+  File "/home/tsw96d/.conda/envs/fuzzyicvi/lib/python3.11/site-packages/sklearn/datasets/_openml.py", line 580, in _load_arff_response
+    X, y, frame, categories = _open_url_and_load_gzip_file(
+                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/tsw96d/.conda/envs/fuzzyicvi/lib/python3.11/site-packages/sklearn/datasets/_openml.py", line 568, in _open_url_and_load_gzip_file
+    return load_arff_from_gzip_file(gzip_file, **arff_params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/tsw96d/.conda/envs/fuzzyicvi/lib/python3.11/site-packages/sklearn/datasets/_arff_parser.py", line 533, in load_arff_from_gzip_file
+    return _pandas_arff_parser(
+           ^^^^^^^^^^^^^^^^^^^^
+  File "/home/tsw96d/.conda/envs/fuzzyicvi/lib/python3.11/site-packages/sklearn/datasets/_arff_parser.py", line 447, in _pandas_arff_parser
+    frame[col] = frame[col].cat.rename_categories(strip_single_quotes)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/tsw96d/.conda/envs/fuzzyicvi/lib/python3.11/site-packages/pandas/core/accessor.py", line 128, in f
+    return self._delegate_method(name, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/tsw96d/.conda/envs/fuzzyicvi/lib/python3.11/site-packages/pandas/core/arrays/categorical.py", line 3253, in _delegate_method
+    res = method(*args, **kwargs)
+          ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/tsw96d/.conda/envs/fuzzyicvi/lib/python3.11/site-packages/pandas/core/arrays/categorical.py", line 1431, in rename_categories
+    new_categories = [new_categories(item) for item in self.categories]
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/tsw96d/.conda/envs/fuzzyicvi/lib/python3.11/site-packages/pandas/core/arrays/categorical.py", line 1431, in <listcomp>
+    new_categories = [new_categories(item) for item in self.categories]
+                      ^^^^^^^^^^^^^^^^^^^^
+  File "/home/tsw96d/.conda/envs/fuzzyicvi/lib/python3.11/site-packages/sklearn/datasets/_arff_parser.py", line 435, in strip_single_quotes
+    match = re.search(single_quote_pattern, input_string)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/tsw96d/.conda/envs/fuzzyicvi/lib/python3.11/re/__init__.py", line 176, in search
+    return _compile(pattern, flags).search(string)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: expected string or bytes-like object, got 'int'

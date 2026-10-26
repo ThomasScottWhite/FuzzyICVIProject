@@ -4,4 +4,4 @@ __pycache__/
 .venv/
 data/
 venv/
-runs/
+*.zip

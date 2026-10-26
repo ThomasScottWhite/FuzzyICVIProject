@@ -1,0 +1,4 @@
+2.9.1+cu126 Tesla V100-PCIE-32GB
+covertype seed=44 fixed: silhouette=0.4618412256240845, ARI=0.0469
+covertype seed=44 no_guidance: silhouette=0.4618412256240845, ARI=0.0469
+Saved /share/vast/dwunsch-lab/Thomas/FuzzyICVIProject/adapative_gating_research/experiment_1/runs/covertype/seed-44/summary.json
