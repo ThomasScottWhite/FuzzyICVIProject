@@ -6,7 +6,7 @@
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=4
 #SBATCH --mem=16G
-#SBATCH --gres=gpu:1
+#SBATCH --gres=gpu:V100-SXM2-32GB:1
 #SBATCH --time=1-00:00:00
 #SBATCH --output=adapative_gating_research/experiment_2/runs/rq2-%A_%a.out
 
