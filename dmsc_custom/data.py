@@ -86,6 +86,9 @@ def load_dataset(
             name="Fashion-MNIST",
             version=1,
             as_frame=False,
+            # The pandas ARFF parser can fail when OpenML reports integer
+            # categories for Fashion-MNIST's label column.
+            parser="liac-arff",
             data_home=None if data_home is None else str(data_home),
         )
         raw_features = np.asarray(raw.data, dtype=np.float32)
