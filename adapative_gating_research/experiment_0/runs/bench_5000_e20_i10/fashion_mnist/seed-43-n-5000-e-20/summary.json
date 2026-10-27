@@ -1,0 +1,47 @@
+{
+  "dataset": "fashion_mnist",
+  "n_samples": 70000,
+  "n_features": 784,
+  "reference_size": 5000,
+  "silhouette_evaluations": 2,
+  "config": {
+    "n_clusters": 10,
+    "hidden_dim": 128,
+    "latent_dim": 3,
+    "epochs": 20,
+    "batch_size": 256,
+    "learning_rate": 0.001,
+    "fuzzifier": 2.0,
+    "silhouette_threshold": 0.5,
+    "adjustment_gamma": 0.0,
+    "evaluation_interval": 10,
+    "evaluation_epochs": null,
+    "gate_metric": "reference",
+    "validation_metrics": [
+      "reference"
+    ],
+    "fcm_max_iter": 50,
+    "fcm_tolerance": 0.0001,
+    "evaluation_size": 5000,
+    "fcm_block_size": 65536,
+    "silhouette_block_size": 512,
+    "seed": 43,
+    "device": "cuda:0"
+  },
+  "device": "cuda:0",
+  "timing_seconds": {
+    "data_loading": 14.323912902968004,
+    "fit_wall": 8.603549752151594,
+    "silhouette": 0.06695065600797534,
+    "rest_of_fit": 8.536599096143618,
+    "autoencoder": 6.795680060982704,
+    "embedding_encoding": 0.0032163490541279316,
+    "fcm": 0.15904202288948,
+    "other_fit_overhead": 1.5786606632173061,
+    "other_measured_stages": 6.957938432926312,
+    "silhouette_per_evaluation": 0.03347532800398767
+  },
+  "silhouette_share_of_fit": 0.0077817479920113414,
+  "silhouette_share_of_measured_stages": 0.009530492960157483,
+  "final_silhouette": 0.30660420656204224
+}

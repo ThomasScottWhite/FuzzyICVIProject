@@ -1,0 +1,84 @@
+{
+  "dataset": "fashion_mnist",
+  "seed": 46,
+  "n_samples": 70000,
+  "reference_size": 5000,
+  "threshold": 0.5,
+  "gamma": 0.05,
+  "guidance_schedule": "each gate check controls all epochs through the next check",
+  "metric_schedule": "gate_checks_and_next_epoch",
+  "results": {
+    "fixed": {
+      "config": {
+        "n_clusters": 10,
+        "hidden_dim": 128,
+        "latent_dim": 3,
+        "epochs": 200,
+        "batch_size": 256,
+        "learning_rate": 0.001,
+        "fuzzifier": 2.0,
+        "silhouette_threshold": 0.5,
+        "adjustment_gamma": 0.05,
+        "evaluation_interval": 10,
+        "evaluation_epochs": null,
+        "gate_metric": "reference",
+        "validation_metrics": [
+          "reference"
+        ],
+        "fcm_max_iter": 50,
+        "fcm_tolerance": 0.0001,
+        "evaluation_size": 5000,
+        "fcm_block_size": 65536,
+        "silhouette_block_size": 512,
+        "seed": 46,
+        "device": "cuda:0"
+      },
+      "final_silhouette": 0.33320438861846924,
+      "external_metrics": {
+        "ACC": 0.5005142857142857,
+        "NMI": 0.514587928992609,
+        "ARI": 0.33358034610851095
+      },
+      "gate_triggers": 0,
+      "adjustments_applied": 0,
+      "training_seconds": 68.65318540018052,
+      "wall_seconds": 72.13871000194922
+    },
+    "no_guidance": {
+      "config": {
+        "n_clusters": 10,
+        "hidden_dim": 128,
+        "latent_dim": 3,
+        "epochs": 200,
+        "batch_size": 256,
+        "learning_rate": 0.001,
+        "fuzzifier": 2.0,
+        "silhouette_threshold": 0.5,
+        "adjustment_gamma": 0.0,
+        "evaluation_interval": 10,
+        "evaluation_epochs": null,
+        "gate_metric": "reference",
+        "validation_metrics": [
+          "reference"
+        ],
+        "fcm_max_iter": 50,
+        "fcm_tolerance": 0.0001,
+        "evaluation_size": 5000,
+        "fcm_block_size": 65536,
+        "silhouette_block_size": 512,
+        "seed": 46,
+        "device": "cuda:0"
+      },
+      "final_silhouette": 0.33320438861846924,
+      "external_metrics": {
+        "ACC": 0.5005142857142857,
+        "NMI": 0.514587928992609,
+        "ARI": 0.33358034610851095
+      },
+      "gate_triggers": 0,
+      "adjustments_applied": 0,
+      "training_seconds": 68.30107775214128,
+      "wall_seconds": 70.56549243698828
+    }
+  }
+}

@@ -1,0 +1,6 @@
+2.9.1+cu126 Tesla V100-SXM2-32GB
+wine: 178 samples, 178 silhouette points, 2 evaluations on cuda:0
+Silhouette: 0.056s (3.2% of fit)
+Rest of fit: 1.702s; total fit: 1.758s
+Other measured stages: 0.281s; silhouette is 16.7% of measured stages
+Saved adapative_gating_research/experiment_0/runs/bench_5000_e20_i10/wine/seed-42-n-178-e-20/summary.json and adapative_gating_research/experiment_0/runs/bench_5000_e20_i10/wine/seed-42-n-178-e-20/evaluations.csv

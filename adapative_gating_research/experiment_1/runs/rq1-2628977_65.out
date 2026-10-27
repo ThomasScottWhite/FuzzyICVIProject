@@ -1,0 +1,4 @@
+2.9.1+cu126 Tesla V100-SXM2-32GB
+wine seed=42 fixed: silhouette=0.4805227518081665, ARI=0.7408
+wine seed=42 no_guidance: silhouette=0.4819734990596771, ARI=0.7558
+Saved adapative_gating_research/experiment_1/runs/gamma_sweep_200/gamma-0.1/wine/seed-42/summary.json

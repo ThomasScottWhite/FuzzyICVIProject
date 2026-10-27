@@ -1,0 +1,84 @@
+{
+  "dataset": "wine",
+  "seed": 43,
+  "n_samples": 178,
+  "reference_size": 178,
+  "threshold": 0.5,
+  "gamma": 0.1,
+  "guidance_schedule": "each gate check controls all epochs through the next check",
+  "metric_schedule": "gate_checks_and_next_epoch",
+  "results": {
+    "fixed": {
+      "config": {
+        "n_clusters": 3,
+        "hidden_dim": 128,
+        "latent_dim": 3,
+        "epochs": 200,
+        "batch_size": 256,
+        "learning_rate": 0.001,
+        "fuzzifier": 2.0,
+        "silhouette_threshold": 0.5,
+        "adjustment_gamma": 0.1,
+        "evaluation_interval": 10,
+        "evaluation_epochs": null,
+        "gate_metric": "reference",
+        "validation_metrics": [
+          "reference"
+        ],
+        "fcm_max_iter": 50,
+        "fcm_tolerance": 0.0001,
+        "evaluation_size": 178,
+        "fcm_block_size": 65536,
+        "silhouette_block_size": 512,
+        "seed": 43,
+        "device": "cuda:0"
+      },
+      "final_silhouette": 0.470396488904953,
+      "external_metrics": {
+        "ACC": 0.9213483146067416,
+        "NMI": 0.7580688728918762,
+        "ARI": 0.7711034095636224
+      },
+      "gate_triggers": 4,
+      "adjustments_applied": 40,
+      "training_seconds": 0.6803845877293497,
+      "wall_seconds": 2.1778690540231764
+    },
+    "no_guidance": {
+      "config": {
+        "n_clusters": 3,
+        "hidden_dim": 128,
+        "latent_dim": 3,
+        "epochs": 200,
+        "batch_size": 256,
+        "learning_rate": 0.001,
+        "fuzzifier": 2.0,
+        "silhouette_threshold": 0.5,
+        "adjustment_gamma": 0.0,
+        "evaluation_interval": 10,
+        "evaluation_epochs": null,
+        "gate_metric": "reference",
+        "validation_metrics": [
+          "reference"
+        ],
+        "fcm_max_iter": 50,
+        "fcm_tolerance": 0.0001,
+        "evaluation_size": 178,
+        "fcm_block_size": 65536,
+        "silhouette_block_size": 512,
+        "seed": 43,
+        "device": "cuda:0"
+      },
+      "final_silhouette": 0.46786031126976013,
+      "external_metrics": {
+        "ACC": 0.9101123595505618,
+        "NMI": 0.7286985527391799,
+        "ARI": 0.7408879194188454
+      },
+      "gate_triggers": 0,
+      "adjustments_applied": 0,
+      "training_seconds": 0.4077292066067457,
+      "wall_seconds": 0.7160160630010068
+    }
+  }
+}

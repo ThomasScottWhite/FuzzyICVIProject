@@ -1,0 +1,76 @@
+{
+  "dataset": "covertype",
+  "condition": "relative",
+  "seed": 101,
+  "n_samples": 581012,
+  "reference_size": 5000,
+  "base_gamma": 0.001,
+  "config": {
+    "n_clusters": 7,
+    "hidden_dim": 128,
+    "latent_dim": 3,
+    "epochs": 1000,
+    "batch_size": 256,
+    "learning_rate": 0.001,
+    "fuzzifier": 2.0,
+    "silhouette_threshold": 0.5,
+    "adjustment_gamma": 0.001,
+    "evaluation_interval": 10,
+    "evaluation_epochs": null,
+    "gate_metric": "reference",
+    "validation_metrics": [
+      "reference"
+    ],
+    "fcm_max_iter": 50,
+    "fcm_tolerance": 0.0001,
+    "evaluation_size": 5000,
+    "fcm_block_size": 65536,
+    "silhouette_block_size": 512,
+    "seed": 101,
+    "device": "cuda:0"
+  },
+  "policy": "first 5 valid unguided scores; 75th percentile; floor 0",
+  "guidance_schedule": "decision at each check applies from the next epoch through the next check",
+  "gate_openings": 72,
+  "active_decisions": 72,
+  "first_open_epoch": 160,
+  "first_active_decision_epoch": 160,
+  "guided_epochs": 710,
+  "first_guided_epoch": 161,
+  "cumulative_guidance_strength": 710.0,
+  "cumulative_effective_gamma": 0.71,
+  "final_silhouette": 0.4626230299472809,
+  "final_metrics": {
+    "ACC": 0.3070969274300703,
+    "NMI": 0.1510701473136582,
+    "ARI": 0.06361794469562063
+  },
+  "checkpoints": {
+    "200": {
+      "silhouette": 0.45197606086730957,
+      "external_metrics": {
+        "ACC": 0.29865131873352013,
+        "NMI": 0.14297327223310502,
+        "ARI": 0.06114631724410055
+      },
+      "gate_openings": 5,
+      "guided_epochs": 40,
+      "first_guided_epoch": 161,
+      "cumulative_effective_gamma": 0.04
+    },
+    "1000": {
+      "silhouette": 0.4626230299472809,
+      "external_metrics": {
+        "ACC": 0.3070969274300703,
+        "NMI": 0.1510701473136582,
+        "ARI": 0.06361794469562063
+      },
+      "gate_openings": 72,
+      "guided_epochs": 710,
+      "first_guided_epoch": 161,
+      "cumulative_effective_gamma": 0.71
+    }
+  },
+  "wall_seconds": 2636.577024723869,
+  "decision_seconds": 0.020020038587972522
+}

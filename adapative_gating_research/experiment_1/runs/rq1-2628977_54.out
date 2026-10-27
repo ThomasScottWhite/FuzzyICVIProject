@@ -1,0 +1,4 @@
+2.9.1+cu126 Tesla V100-SXM2-32GB
+covertype seed=46 fixed: silhouette=0.45625174045562744, ARI=0.0712
+covertype seed=46 no_guidance: silhouette=0.45625174045562744, ARI=0.0712
+Saved adapative_gating_research/experiment_1/runs/gamma_sweep_200/gamma-0.05/covertype/seed-46/summary.json
