@@ -21,7 +21,7 @@ ROOT = Path(__file__).resolve().parents[2]
 RUNS = Path(__file__).resolve().parent / "runs"
 DATASETS = ("iris", "wine", "covertype", "fashion_mnist")
 THRESHOLD = 0.5
-GAMMA = 0.001
+DEFAULT_GAMMA = 0.001
 
 
 def save_history(path: Path, history: list[dict], *, guidance_enabled: bool) -> None:
@@ -48,6 +48,8 @@ def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--dataset", choices=DATASETS, required=True)
     parser.add_argument("--seed", type=int, required=True)
+    parser.add_argument("--gamma", type=float, default=DEFAULT_GAMMA,
+                        help="Guidance adjustment strength for the fixed gate (default: 0.001)")
     parser.add_argument("--output", type=Path, default=RUNS)
     parser.add_argument("--data-home", type=Path, default=ROOT / "data" / "cache")
     parser.add_argument("--device", default="auto")
@@ -59,6 +61,8 @@ def main() -> None:
                         help="Run diagnostic FCM and metrics at every epoch (expensive on large datasets)")
     args = parser.parse_args()
 
+    if not np.isfinite(args.gamma) or not 0.0 <= args.gamma <= 1.0:
+        parser.error("--gamma must be finite and between 0 and 1")
     if args.reference_size < 2:
         parser.error("--reference-size must be at least 2")
     if args.evaluation_interval < 1 or args.epochs < 2 * args.evaluation_interval:
@@ -89,7 +93,7 @@ def main() -> None:
     np.save(run_dir / "reference_indices.npy", reference)
     reference_tensor = torch.as_tensor(reference, dtype=torch.long)
     results = {}
-    for mode, gamma in (("fixed", GAMMA), ("no_guidance", 0.0)):
+    for mode, gamma in (("fixed", args.gamma), ("no_guidance", 0.0)):
         config = DMSCConfig(
             n_clusters=n_clusters,
             epochs=args.epochs,
@@ -169,7 +173,7 @@ def main() -> None:
         "n_samples": n_samples,
         "reference_size": reference_count,
         "threshold": THRESHOLD,
-        "gamma": GAMMA,
+        "gamma": args.gamma,
         "guidance_schedule": "each gate check controls all epochs through the next check",
         "metric_schedule": "every_epoch" if args.metrics_every_epoch else "gate_checks_and_next_epoch",
         "results": results,

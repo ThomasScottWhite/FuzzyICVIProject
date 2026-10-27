@@ -30,5 +30,6 @@ python -c 'import torch; assert torch.cuda.is_available(), "No CUDA GPU is visib
 python -m adapative_gating_research.experiment_1.run \
     --dataset "$dataset" \
     --seed "$seed" \
-    --output adapative_gating_research/experiment_1/runs \
+    --gamma 0.01 \
+    --output adapative_gating_research/experiment_1/runs/gamma_0.01 \
     --device cuda:0
