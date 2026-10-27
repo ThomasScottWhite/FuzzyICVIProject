@@ -164,11 +164,12 @@ def plot_quality(runs: list[Run], path: Path) -> None:
     save(fig, path)
 
 
-def plot_gate_response(runs: list[Run], path: Path) -> None:
+def plot_gate_response(runs: list[Run], path: Path, *, include_control: bool = False) -> None:
     """One dataset/gamma: checks, paired response, and guidance activity."""
     fig, axes = plt.subplots(4, 1, figsize=(11, 11), sharex=True,
                              gridspec_kw={"height_ratios": [1.4, 1.2, 1.2, 0.8]})
     check_scores: dict[int, list[float]] = defaultdict(list)
+    control_scores: dict[int, list[float]] = defaultdict(list)
     differences = {metric: defaultdict(list) for metric in ("ARI", "silhouette")}
     applied: dict[int, list[float]] = defaultdict(list)
     opened_x, opened_y = [], []
@@ -177,7 +178,16 @@ def plot_gate_response(runs: list[Run], path: Path) -> None:
         axes[0].plot([int(row["epoch"]) for row in checks],
                      [float(row["silhouette"]) for row in checks],
                      color="#1675a6", alpha=0.2, lw=1,
-                     label="Individual seeds" if run is runs[0] else None)
+                     label="Fixed-gate seeds" if run is runs[0] else None)
+        if include_control:
+            control_checks = [row for row in run.control
+                              if is_true(row["scheduled_evaluation"])]
+            axes[0].plot([int(row["epoch"]) for row in control_checks],
+                         [float(row["silhouette"]) for row in control_checks],
+                         color="#e18739", alpha=0.2, lw=1,
+                         label="No-guidance seeds" if run is runs[0] else None)
+            for row in control_checks:
+                control_scores[int(row["epoch"])].append(float(row["silhouette"]))
         for row in checks:
             epoch = int(row["epoch"])
             score = float(row["silhouette"])
@@ -197,10 +207,15 @@ def plot_gate_response(runs: list[Run], path: Path) -> None:
     check_epochs = sorted(check_scores)
     axes[0].plot(check_epochs, [mean(check_scores[e]) for e in check_epochs],
                  color="#1675a6", marker="o", ms=3, lw=2.4,
-                 label="Mean at gate check", zorder=3)
+                 label="Fixed-gate mean", zorder=3)
+    if include_control:
+        control_epochs = sorted(control_scores)
+        axes[0].plot(control_epochs, [mean(control_scores[e]) for e in control_epochs],
+                     color="#e18739", ls="--", marker="o", ms=3, lw=2.4,
+                     label="No-guidance mean", zorder=3.5)
     if opened_x:
         axes[0].scatter(opened_x, opened_y, color="#bd3f53", marker="*", s=50,
-                        alpha=0.75, label="Gate opened", zorder=4)
+                        alpha=0.75, label="Gate opened", zorder=5)
     axes[0].axhline(float(runs[0].summary["threshold"]), color="gray", ls="--",
                     lw=1, label="Threshold")
     axes[0].set_ylabel("Reference silhouette")
@@ -342,7 +357,9 @@ def main() -> None:
             group = [r for r in gamma_runs if r.dataset == dataset]
             plot_quality(group, folder / f"{dataset}_quality.png")
             plot_gate_response(group, folder / f"{dataset}_gate_response.png")
-            count += 2
+            plot_gate_response(group, folder / f"{dataset}_gate_response_with_fixed.png",
+                               include_control=True)
+            count += 3
     comparison = output / "across_gamma"
     for dataset in datasets:
         group = [r for r in runs if r.dataset == dataset]

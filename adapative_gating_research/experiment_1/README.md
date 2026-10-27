@@ -32,7 +32,9 @@ python -m adapative_gating_research.experiment_1.graphs
 
 The new `graphs.py` reads completed runs under `runs/gamma_sweep_200` and
 writes figures to `runs/gamma_sweep_200/graphs` by default. `by_gamma/` contains
-quality trajectories and gate response for each dataset, plus final paired
+quality trajectories and gate response for each dataset, plus a
+`*_gate_response_with_fixed.png` version that overlays the orange no-guidance
+silhouette trajectory on the blue fixed-gate trajectory, and final paired
 differences across datasets. `across_gamma/` contains matched-seed gamma
 responses, positive-seed counts, and gate activity. Use `--input` and `--output`
 to choose other directories. Paired differences are fixed gate minus no
