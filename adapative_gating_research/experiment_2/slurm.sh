@@ -41,6 +41,6 @@ python -m adapative_gating_research.experiment_2.run \
     --epochs 200 \
     --evaluation-interval 10 \
     --reference-size 5000 \
-    --gamma 0.001 \
+    --gamma 0.01 \
     --output adapative_gating_research/experiment_2/runs/paired_v1 \
     --device cuda:0
