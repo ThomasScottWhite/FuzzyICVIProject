@@ -71,13 +71,12 @@ def two_stage_initial_centers(
 def _initial_memberships(
     x: torch.Tensor, centers: torch.Tensor, block_size: int
 ) -> torch.Tensor:
-    """Use normalized exp(-Euclidean distance) weights as in the paper."""
+    """Use normalized exp(-squared Euclidean distance) weights as in the paper."""
     memberships = torch.empty(
         (x.shape[0], centers.shape[0]), dtype=x.dtype, device=x.device
     )
     for start, end, squared in _distance_blocks(x, centers, block_size):
-        distances = squared.clamp_min(0.0).sqrt()
-        memberships[start:end] = torch.softmax(-distances, dim=1)
+        memberships[start:end] = torch.softmax(-squared, dim=1)
     return memberships
 
 

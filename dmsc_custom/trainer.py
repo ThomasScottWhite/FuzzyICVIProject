@@ -106,7 +106,20 @@ class TrainingResult:
     peak_memory_bytes_by_metric: dict[str, int]
     gate_triggers: int
     adjustments_applied: int
+    cumulative_guidance_strength: float
     device: str
+
+
+@dataclass
+class GuidanceDecision:
+    """Guidance for the interval following a scheduled clustering check.
+
+    strength and optional per-sample weights multiply adjustment_gamma.
+    """
+
+    strength: float
+    sample_weights: torch.Tensor | None = None
+    diagnostics: dict[str, float | int | None] = field(default_factory=dict)
 
 
 def _synchronize(device: torch.device) -> None:
@@ -244,6 +257,13 @@ class DMSCTrainer:
         *,
         evaluation_indices: np.ndarray | None = None,
         sampled_indices: np.ndarray | None = None,
+        epoch_observer: Callable[
+            [int, torch.Tensor, FCMResult, dict[str, int | float | bool | str | None]], None
+        ] | None = None,
+        epoch_observer_epochs: tuple[int, ...] | None = None,
+        guidance_decider: Callable[
+            [int, torch.Tensor, FCMResult, float | None, np.ndarray], GuidanceDecision
+        ] | None = None,
         progress_desc: str | None = None,
         progress_position: int = 0,
         report_device: bool = False,
@@ -325,7 +345,12 @@ class DMSCTrainer:
         peak_memory_bytes_by_metric = {name: 0 for name in requested_metrics}
         gate_triggers = 0
         adjustments_applied = 0
-        pending_adjustment: tuple[torch.Tensor, torch.Tensor] | None = None
+        cumulative_guidance_strength = 0.0
+        # The most recent scheduled gate decision controls every training epoch
+        # until the next scheduled evaluation replaces it.
+        active_adjustment: tuple[
+            torch.Tensor, torch.Tensor, float, torch.Tensor | None
+        ] | None = None
         final_clustering: FCMResult | None = None
         final_scores: dict[str, float | None] = {}
         scheduled_epochs = set(cfg.scheduled_evaluation_epochs)
@@ -346,13 +371,18 @@ class DMSCTrainer:
 
         for epoch in range(1, cfg.epochs + 1):
             model.train()
+            embedding: torch.Tensor | None = None
+            clustering: FCMResult | None = None
             order = torch.randperm(n_samples, generator=shuffle_generator, device=device)
             epoch_loss_total = 0.0
             epoch_sample_count = 0
-            adjustment = pending_adjustment
-            pending_adjustment = None
+            adjustment = active_adjustment
             if adjustment is not None:
                 adjustments_applied += 1
+                interval_strength = adjustment[2]
+                if adjustment[3] is not None:
+                    interval_strength *= float(adjustment[3].mean().item())
+                cumulative_guidance_strength += interval_strength
             epoch_started = time.perf_counter()
 
             for start in range(0, n_samples, cfg.batch_size):
@@ -361,9 +391,13 @@ class DMSCTrainer:
                 optimizer.zero_grad(set_to_none=True)
                 latent = model.encode(batch)
                 if adjustment is not None:
-                    centers, full_labels = adjustment
+                    centers, full_labels, strength, sample_weights = adjustment
                     assigned_centers = centers[full_labels[indices]]
-                    latent = latent + cfg.adjustment_gamma * (assigned_centers - latent)
+                    scale = cfg.adjustment_gamma * strength
+                    if sample_weights is not None:
+                        latent = latent + scale * sample_weights[indices, None] * (assigned_centers - latent)
+                    else:
+                        latent = latent + scale * (assigned_centers - latent)
                 reconstructed = model.decode(latent)
                 loss = reconstruction_loss(reconstructed, batch)
                 loss.backward()
@@ -397,6 +431,11 @@ class DMSCTrainer:
                 "gate_score": None,
                 "gate_triggered": False,
                 "adjustment_applied": adjustment is not None,
+                "guidance_strength": (
+                    adjustment[2] * (float(adjustment[3].mean().item()) if adjustment[3] is not None else 1.0)
+                    if adjustment is not None else 0.0
+                ),
+                "decision_seconds": None,
                 "fcm_iterations": None,
                 "fcm_objective": None,
                 "fcm_seconds": None,
@@ -438,10 +477,35 @@ class DMSCTrainer:
                     device,
                 )
                 score_for_gate = scores[cfg.gate_metric]
-                triggered = score_for_gate is not None and score_for_gate >= cfg.silhouette_threshold
+                decision_started = time.perf_counter()
+                if guidance_decider is None:
+                    triggered = score_for_gate is not None and score_for_gate >= cfg.silhouette_threshold
+                    decision = GuidanceDecision(strength=float(triggered))
+                else:
+                    decision = guidance_decider(
+                        epoch, embedding, clustering, score_for_gate, evaluation_indices
+                    )
+                    if not 0.0 <= decision.strength <= 1.0:
+                        raise ValueError("Guidance strength must be in [0, 1].")
+                    if decision.sample_weights is not None:
+                        weights = decision.sample_weights
+                        if weights.shape != (n_samples,) or weights.device != device:
+                            raise ValueError("Guidance sample weights must match all training samples and device.")
+                        if not torch.isfinite(weights).all() or weights.min() < 0 or weights.max() > 1:
+                            raise ValueError("Guidance sample weights must be finite and in [0, 1].")
+                    triggered = decision.strength > 0.0
+                _synchronize(device)
+                decision_seconds = time.perf_counter() - decision_started
                 if triggered:
                     gate_triggers += 1
-                    pending_adjustment = (clustering.centers.detach(), clustering.labels.detach())
+                if triggered and cfg.adjustment_gamma > 0.0:
+                    active_adjustment = (
+                        clustering.centers.detach(), clustering.labels.detach(),
+                        decision.strength,
+                        decision.sample_weights.detach() if decision.sample_weights is not None else None,
+                    )
+                else:
+                    active_adjustment = None
                 final_clustering = clustering
                 final_scores = scores
                 current_validation_seconds = encoding_seconds + sum(metric_elapsed.values())
@@ -458,6 +522,7 @@ class DMSCTrainer:
                         "silhouette": scores.get("reference", score_for_gate),
                         "gate_score": score_for_gate,
                         "gate_triggered": triggered,
+                        "decision_seconds": decision_seconds,
                         "fcm_iterations": clustering.iterations,
                         "fcm_objective": clustering.objective,
                         "fcm_seconds": current_fcm_seconds,
@@ -469,6 +534,28 @@ class DMSCTrainer:
                     record[f"gate_{metric}"] = score is not None and score >= cfg.silhouette_threshold
                     record[f"validation_seconds_{metric}"] = metric_elapsed[metric]
                     record[f"peak_memory_bytes_{metric}"] = metric_memory[metric]
+                for name, value in decision.diagnostics.items():
+                    record[f"decision_{name}"] = value
+
+            if epoch_observer is not None and (
+                epoch_observer_epochs is None or epoch in epoch_observer_epochs
+            ):
+                # Diagnostics run after the epoch's weight update. Reuse the
+                # scheduled clustering result; extra evaluations never affect
+                # the gate or the active training adjustment.
+                if clustering is None:
+                    embedding = self._encode_all(model, x)
+                    clustering = fuzzy_c_means(
+                        embedding,
+                        cfg.n_clusters,
+                        fuzzifier=cfg.fuzzifier,
+                        max_iter=cfg.fcm_max_iter,
+                        tolerance=cfg.fcm_tolerance,
+                        seed=cfg.seed + epoch,
+                        block_size=cfg.fcm_block_size,
+                    )
+                assert embedding is not None
+                epoch_observer(epoch, embedding, clustering, record)
 
             history.append(record)
             if progress_bar is not None:
@@ -536,6 +623,7 @@ class DMSCTrainer:
             peak_memory_bytes_by_metric=peak_memory_bytes_by_metric,
             gate_triggers=gate_triggers,
             adjustments_applied=adjustments_applied,
+            cumulative_guidance_strength=cumulative_guidance_strength,
             device=str(device),
         )
 
