@@ -1,0 +1,2 @@
+2.9.1+cu126 Tesla V100-SXM2-32GB
+covertype seed=102 stability: ARI=0.0673, NMI=0.1546, guided_epochs=500; saved adapative_gating_research/experiment_2/runs/gamma_sweep_1000/covertype/stability/gamma-0.01/seed-102

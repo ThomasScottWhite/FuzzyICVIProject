@@ -1,0 +1,76 @@
+{
+  "dataset": "covertype",
+  "condition": "relative",
+  "seed": 102,
+  "n_samples": 581012,
+  "reference_size": 5000,
+  "base_gamma": 0.001,
+  "config": {
+    "n_clusters": 7,
+    "hidden_dim": 128,
+    "latent_dim": 3,
+    "epochs": 1000,
+    "batch_size": 256,
+    "learning_rate": 0.001,
+    "fuzzifier": 2.0,
+    "silhouette_threshold": 0.5,
+    "adjustment_gamma": 0.001,
+    "evaluation_interval": 10,
+    "evaluation_epochs": null,
+    "gate_metric": "reference",
+    "validation_metrics": [
+      "reference"
+    ],
+    "fcm_max_iter": 50,
+    "fcm_tolerance": 0.0001,
+    "evaluation_size": 5000,
+    "fcm_block_size": 65536,
+    "silhouette_block_size": 512,
+    "seed": 102,
+    "device": "cuda:0"
+  },
+  "policy": "first 5 valid unguided scores; 75th percentile; floor 0",
+  "guidance_schedule": "decision at each check applies from the next epoch through the next check",
+  "gate_openings": 13,
+  "active_decisions": 13,
+  "first_open_epoch": 870,
+  "first_active_decision_epoch": 870,
+  "guided_epochs": 120,
+  "first_guided_epoch": 871,
+  "cumulative_guidance_strength": 120.0,
+  "cumulative_effective_gamma": 0.12,
+  "final_silhouette": 0.4903029203414917,
+  "final_metrics": {
+    "ACC": 0.30963215906039804,
+    "NMI": 0.15671053701297874,
+    "ARI": 0.06902404391644673
+  },
+  "checkpoints": {
+    "200": {
+      "silhouette": 0.47167763113975525,
+      "external_metrics": {
+        "ACC": 0.3090900015834441,
+        "NMI": 0.14859268022470026,
+        "ARI": 0.06290501521744475
+      },
+      "gate_openings": 0,
+      "guided_epochs": 0,
+      "first_guided_epoch": null,
+      "cumulative_effective_gamma": 0.0
+    },
+    "1000": {
+      "silhouette": 0.4903029203414917,
+      "external_metrics": {
+        "ACC": 0.30963215906039804,
+        "NMI": 0.15671053701297874,
+        "ARI": 0.06902404391644673
+      },
+      "gate_openings": 13,
+      "guided_epochs": 120,
+      "first_guided_epoch": 871,
+      "cumulative_effective_gamma": 0.12
+    }
+  },
+  "wall_seconds": 2793.726745801978,
+  "decision_seconds": 0.012984534492716193
+}

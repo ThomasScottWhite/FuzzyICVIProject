@@ -1,0 +1,76 @@
+{
+  "dataset": "covertype",
+  "condition": "stability",
+  "seed": 102,
+  "n_samples": 581012,
+  "reference_size": 5000,
+  "base_gamma": 0.001,
+  "config": {
+    "n_clusters": 7,
+    "hidden_dim": 128,
+    "latent_dim": 3,
+    "epochs": 1000,
+    "batch_size": 256,
+    "learning_rate": 0.001,
+    "fuzzifier": 2.0,
+    "silhouette_threshold": 0.5,
+    "adjustment_gamma": 0.001,
+    "evaluation_interval": 10,
+    "evaluation_epochs": null,
+    "gate_metric": "reference",
+    "validation_metrics": [
+      "reference"
+    ],
+    "fcm_max_iter": 50,
+    "fcm_tolerance": 0.0001,
+    "evaluation_size": 5000,
+    "fcm_block_size": 65536,
+    "silhouette_block_size": 512,
+    "seed": 102,
+    "device": "cuda:0"
+  },
+  "policy": "two 2%-SD latent perturbations; mean assignment ARI >= 0.9",
+  "guidance_schedule": "decision at each check applies from the next epoch through the next check",
+  "gate_openings": 84,
+  "active_decisions": 84,
+  "first_open_epoch": 10,
+  "first_active_decision_epoch": 10,
+  "guided_epochs": 830,
+  "first_guided_epoch": 11,
+  "cumulative_guidance_strength": 830.0,
+  "cumulative_effective_gamma": 0.8300000000000001,
+  "final_silhouette": 0.469561904668808,
+  "final_metrics": {
+    "ACC": 0.31328957061127827,
+    "NMI": 0.14394044227154468,
+    "ARI": 0.06939340009464179
+  },
+  "checkpoints": {
+    "200": {
+      "silhouette": 0.46609583497047424,
+      "external_metrics": {
+        "ACC": 0.3092724418772762,
+        "NMI": 0.15226211515124413,
+        "ARI": 0.06901234539521947
+      },
+      "gate_openings": 14,
+      "guided_epochs": 130,
+      "first_guided_epoch": 11,
+      "cumulative_effective_gamma": 0.13
+    },
+    "1000": {
+      "silhouette": 0.469561904668808,
+      "external_metrics": {
+        "ACC": 0.31328957061127827,
+        "NMI": 0.14394044227154468,
+        "ARI": 0.06939340009464179
+      },
+      "gate_openings": 84,
+      "guided_epochs": 830,
+      "first_guided_epoch": 11,
+      "cumulative_effective_gamma": 0.8300000000000001
+    }
+  },
+  "wall_seconds": 3046.434291036101,
+  "decision_seconds": 36.09996685385704
+}
