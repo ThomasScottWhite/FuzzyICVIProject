@@ -1,7 +1,7 @@
 #!/bin/bash -l
 #SBATCH --job-name=dmsc-rq2
 #SBATCH --partition=requeue
-#SBATCH --array=0-69%2
+#SBATCH --array=0-249%2
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=4
@@ -12,15 +12,25 @@
 
 set -euo pipefail
 
-# Two datasets x seven conditions x five fresh matched seeds.
+# Two datasets x five matched seeds x (one shared control + six methods x four gammas).
 datasets=(covertype iris)
-conditions=(no_guidance fixed relative null_calibrated stability confidence_weighted soft)
+conditions=(fixed relative null_calibrated stability confidence_weighted soft)
+gammas=(0.001 0.01 0.05 0.1)
 seeds=(101 102 103 104 105)
 task=${SLURM_ARRAY_TASK_ID:?Submit this script with sbatch}
-per_dataset=$((${#conditions[@]} * ${#seeds[@]}))
+per_seed=$((1 + ${#conditions[@]} * ${#gammas[@]}))
+per_dataset=$((per_seed * ${#seeds[@]}))
 dataset=${datasets[$((task / per_dataset))]}
-condition=${conditions[$(((task / ${#seeds[@]}) % ${#conditions[@]}))]}
-seed=${seeds[$((task % ${#seeds[@]}))]}
+seed=${seeds[$(((task % per_dataset) / per_seed))]}
+variant=$((task % per_seed))
+if (( variant == 0 )); then
+    condition=no_guidance
+    gamma=0
+else
+    guided=$((variant - 1))
+    condition=${conditions[$((guided / ${#gammas[@]}))]}
+    gamma=${gammas[$((guided % ${#gammas[@]}))]}
+fi
 
 cd "${SLURM_SUBMIT_DIR:?Submit from the repository root}"
 if [[ ! -f adapative_gating_research/experiment_2/run.py ]]; then
@@ -38,9 +48,9 @@ python -m adapative_gating_research.experiment_2.run \
     --dataset "$dataset" \
     --condition "$condition" \
     --seed "$seed" \
-    --epochs 200 \
+    --epochs 1000 \
     --evaluation-interval 10 \
     --reference-size 5000 \
-    --gamma 0.001 \
-    --output adapative_gating_research/experiment_2/runs/paired_v1 \
+    --gamma "$gamma" \
+    --output adapative_gating_research/experiment_2/runs/gamma_sweep_1000 \
     --device cuda:0

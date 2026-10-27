@@ -35,7 +35,7 @@ def main() -> None:
     parser.add_argument("--dataset", choices=DATASETS, required=True)
     parser.add_argument("--condition", choices=CONDITIONS, required=True)
     parser.add_argument("--seed", type=int, required=True)
-    parser.add_argument("--epochs", type=int, default=200)
+    parser.add_argument("--epochs", type=int, default=1000)
     parser.add_argument("--evaluation-interval", type=int, default=10)
     parser.add_argument("--reference-size", type=int, default=5000)
     parser.add_argument("--gamma", type=float, default=0.001)
@@ -47,10 +47,13 @@ def main() -> None:
         parser.error("epochs and interval must be positive; reference size must be at least 2")
     if args.epochs % args.evaluation_interval:
         parser.error("--epochs must be divisible by --evaluation-interval")
-    if not 0 < args.gamma <= 1:
-        parser.error("--gamma must be in (0, 1]")
+    if not np.isfinite(args.gamma) or not 0 <= args.gamma <= 1:
+        parser.error("--gamma must be finite and in [0, 1]")
+    if args.condition != "no_guidance" and args.gamma == 0:
+        parser.error("Guided conditions require --gamma > 0")
 
-    run_dir = args.output / args.dataset / args.condition / f"seed-{args.seed}"
+    gamma = 0.0 if args.condition == "no_guidance" else args.gamma
+    run_dir = args.output / args.dataset / args.condition / f"gamma-{gamma:g}" / f"seed-{args.seed}"
     if (run_dir / "summary.json").exists():
         parser.error(f"Completed run already exists: {run_dir}")
     data = load_dataset(args.dataset, data_home=args.data_home)
@@ -72,7 +75,7 @@ def main() -> None:
         evaluation_interval=args.evaluation_interval,
         evaluation_size=reference_size,
         silhouette_threshold=0.5,
-        adjustment_gamma=0.0 if args.condition == "no_guidance" else args.gamma,
+        adjustment_gamma=gamma,
         gate_metric="reference",
         validation_metrics=("reference",),
         seed=args.seed,
@@ -122,12 +125,34 @@ def main() -> None:
     )
     opened = [int(row["epoch"]) for row in result.history if row["gate_triggered"]]
     guided = [int(row["epoch"]) for row in result.history if row["adjustment_applied"]]
+    checkpoints = {}
+    for checkpoint_epoch in (200, args.epochs):
+        if checkpoint_epoch > args.epochs or str(checkpoint_epoch) in checkpoints:
+            continue
+        metric = next((row for row in metric_rows if row["epoch"] == checkpoint_epoch), None)
+        if metric is None:
+            continue
+        history_to_checkpoint = [row for row in result.history if row["epoch"] <= checkpoint_epoch]
+        checkpoints[str(checkpoint_epoch)] = {
+            "silhouette": metric["silhouette"],
+            "external_metrics": {name: metric[name] for name in ("ACC", "NMI", "ARI")},
+            "gate_openings": sum(bool(row["gate_triggered"]) for row in history_to_checkpoint)
+            if args.condition not in {"confidence_weighted", "soft"} else None,
+            "guided_epochs": sum(bool(row["adjustment_applied"]) for row in history_to_checkpoint),
+            "first_guided_epoch": next(
+                (int(row["epoch"]) for row in history_to_checkpoint if row["adjustment_applied"]), None
+            ),
+            "cumulative_effective_gamma": gamma * sum(
+                float(row["guidance_strength"]) for row in history_to_checkpoint
+            ),
+        }
     summary = {
         "dataset": data.name,
         "condition": args.condition,
         "seed": args.seed,
         "n_samples": n_samples,
         "reference_size": reference_size,
+        "base_gamma": gamma,
         "config": asdict(config),
         "policy": {
             "relative": "first 5 valid unguided scores; 75th percentile; floor 0",
@@ -149,6 +174,7 @@ def main() -> None:
         "cumulative_effective_gamma": config.adjustment_gamma * result.cumulative_guidance_strength,
         "final_silhouette": result.final_silhouette,
         "final_metrics": final_external,
+        "checkpoints": checkpoints,
         "wall_seconds": wall_seconds,
         "decision_seconds": sum(float(row["decision_seconds"] or 0) for row in result.history),
     }
