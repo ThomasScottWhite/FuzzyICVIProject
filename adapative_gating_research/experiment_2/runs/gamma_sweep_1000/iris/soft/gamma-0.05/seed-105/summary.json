@@ -1,0 +1,76 @@
+{
+  "dataset": "iris",
+  "condition": "soft",
+  "seed": 105,
+  "n_samples": 150,
+  "reference_size": 150,
+  "base_gamma": 0.05,
+  "config": {
+    "n_clusters": 3,
+    "hidden_dim": 128,
+    "latent_dim": 3,
+    "epochs": 1000,
+    "batch_size": 256,
+    "learning_rate": 0.001,
+    "fuzzifier": 2.0,
+    "silhouette_threshold": 0.5,
+    "adjustment_gamma": 0.05,
+    "evaluation_interval": 10,
+    "evaluation_epochs": null,
+    "gate_metric": "reference",
+    "validation_metrics": [
+      "reference"
+    ],
+    "fcm_max_iter": 50,
+    "fcm_tolerance": 0.0001,
+    "evaluation_size": 150,
+    "fcm_block_size": 65536,
+    "silhouette_block_size": 512,
+    "seed": 105,
+    "device": "cuda:0"
+  },
+  "policy": "sigmoid((silhouette - 0.5) / 0.05)",
+  "guidance_schedule": "decision at each check applies from the next epoch through the next check",
+  "gate_openings": null,
+  "active_decisions": 100,
+  "first_open_epoch": null,
+  "first_active_decision_epoch": 10,
+  "guided_epochs": 990,
+  "first_guided_epoch": 11,
+  "cumulative_guidance_strength": 705.5752891840326,
+  "cumulative_effective_gamma": 35.27876445920163,
+  "final_silhouette": 0.5593850612640381,
+  "final_metrics": {
+    "ACC": 0.5266666666666666,
+    "NMI": 0.6488783978891244,
+    "ARI": 0.44284561381986215
+  },
+  "checkpoints": {
+    "200": {
+      "silhouette": 0.5842670202255249,
+      "external_metrics": {
+        "ACC": 0.9266666666666666,
+        "NMI": 0.8024440070096257,
+        "ARI": 0.8022085453675192
+      },
+      "gate_openings": null,
+      "guided_epochs": 190,
+      "first_guided_epoch": 11,
+      "cumulative_effective_gamma": 9.121270285943483
+    },
+    "1000": {
+      "silhouette": 0.5593850612640381,
+      "external_metrics": {
+        "ACC": 0.5266666666666666,
+        "NMI": 0.6488783978891244,
+        "ARI": 0.44284561381986215
+      },
+      "gate_openings": null,
+      "guided_epochs": 990,
+      "first_guided_epoch": 11,
+      "cumulative_effective_gamma": 35.27876445920163
+    }
+  },
+  "wall_seconds": 4.311066780006513,
+  "decision_seconds": 0.0017828342970460653
+}

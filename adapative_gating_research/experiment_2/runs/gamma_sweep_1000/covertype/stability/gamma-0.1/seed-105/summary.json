@@ -1,0 +1,76 @@
+{
+  "dataset": "covertype",
+  "condition": "stability",
+  "seed": 105,
+  "n_samples": 581012,
+  "reference_size": 5000,
+  "base_gamma": 0.1,
+  "config": {
+    "n_clusters": 7,
+    "hidden_dim": 128,
+    "latent_dim": 3,
+    "epochs": 1000,
+    "batch_size": 256,
+    "learning_rate": 0.001,
+    "fuzzifier": 2.0,
+    "silhouette_threshold": 0.5,
+    "adjustment_gamma": 0.1,
+    "evaluation_interval": 10,
+    "evaluation_epochs": null,
+    "gate_metric": "reference",
+    "validation_metrics": [
+      "reference"
+    ],
+    "fcm_max_iter": 50,
+    "fcm_tolerance": 0.0001,
+    "evaluation_size": 5000,
+    "fcm_block_size": 65536,
+    "silhouette_block_size": 512,
+    "seed": 105,
+    "device": "cuda:0"
+  },
+  "policy": "two 2%-SD latent perturbations; mean assignment ARI >= 0.9",
+  "guidance_schedule": "decision at each check applies from the next epoch through the next check",
+  "gate_openings": 35,
+  "active_decisions": 35,
+  "first_open_epoch": 30,
+  "first_active_decision_epoch": 30,
+  "guided_epochs": 350,
+  "first_guided_epoch": 31,
+  "cumulative_guidance_strength": 350.0,
+  "cumulative_effective_gamma": 35.0,
+  "final_silhouette": 0.4642517566680908,
+  "final_metrics": {
+    "ACC": 0.24749402766207926,
+    "NMI": 0.10580522303809826,
+    "ARI": 0.03902238873048672
+  },
+  "checkpoints": {
+    "200": {
+      "silhouette": 0.47593915462493896,
+      "external_metrics": {
+        "ACC": 0.24313783536312503,
+        "NMI": 0.09063761995644186,
+        "ARI": 0.03551791503665296
+      },
+      "gate_openings": 6,
+      "guided_epochs": 50,
+      "first_guided_epoch": 31,
+      "cumulative_effective_gamma": 5.0
+    },
+    "1000": {
+      "silhouette": 0.4642517566680908,
+      "external_metrics": {
+        "ACC": 0.24749402766207926,
+        "NMI": 0.10580522303809826,
+        "ARI": 0.03902238873048672
+      },
+      "gate_openings": 35,
+      "guided_epochs": 350,
+      "first_guided_epoch": 31,
+      "cumulative_effective_gamma": 35.0
+    }
+  },
+  "wall_seconds": 2504.612565709045,
+  "decision_seconds": 24.850840059341863
+}
