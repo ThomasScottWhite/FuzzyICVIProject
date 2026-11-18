@@ -1,5 +1,29 @@
 # Experiment 2: compare adaptive guidance methods
 
+## HIGGS-only extension
+
+Use the same fixed one-million-row HIGGS subset as Experiment 1. With the
+`fuzzyicvi` environment active, run from the repository root:
+
+```bash
+python -m dmsc_custom.higgs
+mkdir -p adapative_gating_research/experiment_2/runs
+sbatch adapative_gating_research/experiment_2/slurm_higgs.sh
+```
+
+The source is the headerless `data/HIGGS.csv`; subset preparation, provenance,
+and cache behavior are documented in `../experiment_1/README.md`. Preparation
+reuses an existing valid cache. All methods and seeds see exactly the same
+rows, min-max scaling, and fixed 5,000-point silhouette reference sample.
+
+This separate array runs HIGGS only: five fresh matched seeds (101–105) ×
+(one no-guidance control + six guided methods × four gammas) = 125 tasks.
+Training remains at 1,000 epochs with results recorded at epochs 200 and 1,000.
+It requests 32 GB host memory and retains the existing GPU and time limit;
+runtime at this scale has not yet been benchmarked. Results go under
+`runs/gamma_sweep_1000/higgs/` and are included by the existing analyzer. The
+original Slurm script and completed runs on other datasets are unchanged.
+
 This experiment compares seven conditions on the same autoencoder, FCM,
 evaluation schedule, reference sample, and paired seeds. Each gamma value is
 shared across the guided conditions. The conditions are no guidance, the fixed

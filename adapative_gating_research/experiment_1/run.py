@@ -19,7 +19,7 @@ from dmsc_custom.trainer import DMSCConfig, DMSCTrainer
 
 ROOT = Path(__file__).resolve().parents[2]
 RUNS = Path(__file__).resolve().parent / "runs"
-DATASETS = ("iris", "wine", "covertype", "fashion_mnist")
+DATASETS = ("iris", "wine", "covertype", "fashion_mnist", "higgs")
 THRESHOLD = 0.5
 DEFAULT_GAMMA = 0.001
 

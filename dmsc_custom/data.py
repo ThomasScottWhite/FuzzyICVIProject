@@ -111,6 +111,16 @@ def load_dataset(
             minimum=minimum,
             maximum=maximum,
         )
+    elif normalized_name == "higgs":
+        from .higgs import DEFAULT_SOURCE, load_higgs
+
+        source = DEFAULT_SOURCE if csv_path is None else Path(csv_path)
+        cache_home = DEFAULT_SOURCE.parent / "cache" if data_home is None else Path(data_home)
+        rows, _ = load_higgs(source, cache_home)
+        raw_features = rows[:, 1:]
+        raw_labels = rows[:, 0].astype(np.int64)
+        label_values = ["0", "1"]
+        feature_names = [f"feature_{index}" for index in range(28)]
     elif normalized_name == "csv":
         if csv_path is None:
             raise ValueError("--csv-path is required when --dataset csv is selected.")
@@ -153,7 +163,7 @@ def load_dataset(
             )
             label_values = [str(value) for value in label_values.tolist()]
     else:
-        raise ValueError("Dataset must be one of: iris, wine, covertype, fashion_mnist, csv.")
+        raise ValueError("Dataset must be one of: iris, wine, covertype, fashion_mnist, higgs, csv.")
 
     scaled, minimum, maximum = _scale_to_unit_interval(raw_features)
     labels = None if raw_labels is None else np.asarray(raw_labels, dtype=np.int64)

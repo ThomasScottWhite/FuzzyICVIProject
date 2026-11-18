@@ -21,7 +21,7 @@ def _parser() -> argparse.ArgumentParser:
     )
     parser.add_argument(
         "--dataset",
-        choices=("iris", "wine", "covertype", "fashion_mnist", "csv"),
+        choices=("iris", "wine", "covertype", "fashion_mnist", "higgs", "csv"),
         default="iris",
     )
     parser.add_argument("--data-home", type=Path, help="scikit-learn cache directory for downloaded datasets.")
