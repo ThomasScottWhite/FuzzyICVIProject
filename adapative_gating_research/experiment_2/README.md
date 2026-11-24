@@ -2,7 +2,7 @@
 
 ## HIGGS-only extension
 
-Use the same fixed one-million-row HIGGS subset as Experiment 1. With the
+Use the same fixed two-million-row HIGGS subset as Experiment 1. With the
 `fuzzyicvi` environment active, run from the repository root:
 
 ```bash
@@ -16,13 +16,26 @@ and cache behavior are documented in `../experiment_1/README.md`. Preparation
 reuses an existing valid cache. All methods and seeds see exactly the same
 rows, min-max scaling, and fixed 5,000-point silhouette reference sample.
 
-This separate array runs HIGGS only: five fresh matched seeds (101–105) ×
-(one no-guidance control + six guided methods × four gammas) = 125 tasks.
-Training remains at 1,000 epochs with results recorded at epochs 200 and 1,000.
-It requests 32 GB host memory and retains the existing GPU and time limit;
-runtime at this scale has not yet been benchmarked. Results go under
-`runs/gamma_sweep_1000/higgs/` and are included by the existing analyzer. The
-original Slurm script and completed runs on other datasets are unchanged.
+This separate array runs HIGGS only: one fresh matched seed (101) ×
+(one no-guidance control + six guided methods × four gammas) = 25 tasks.
+All conditions train for 200 epochs, with the same 10-epoch evaluation interval
+and 5,000-point reference sample. It requests 32 GB host memory and retains the
+existing GPU and time limit; runtime at this scale has not yet been benchmarked.
+Results go under `runs/higgs_2m_200/higgs/`, separately from earlier
+one-million-row and 1,000-epoch runs. The original Slurm script and completed
+runs on other datasets are unchanged. Existing submitted jobs retain their
+original settings. Treat HIGGS as an exploratory, budget-limited case study;
+one seed does not establish robustness, and 200 epochs do not establish
+long-training performance.
+
+Analyze the reduced HIGGS run separately:
+
+```bash
+python -m adapative_gating_research.experiment_2.analyze \
+  --input adapative_gating_research/experiment_2/runs/higgs_2m_200
+```
+
+Only the 200-epoch checkpoint is available for these runs.
 
 This experiment compares seven conditions on the same autoencoder, FCM,
 evaluation schedule, reference sample, and paired seeds. Each gamma value is

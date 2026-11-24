@@ -2,7 +2,7 @@
 
 ## HIGGS-only extension
 
-`higgs` uses exactly 1,000,000 rows sampled without replacement from the local,
+`higgs` uses exactly 2,000,000 rows sampled without replacement from the local,
 headerless `data/HIGGS.csv` (first column: binary label; remaining 28: features).
 The sampling seed is fixed at 2026, independently of training seeds. Features
 are min-max scaled on this subset; labels are excluded from the features.
@@ -19,16 +19,30 @@ sbatch adapative_gating_research/experiment_1/slurm_higgs.sh
 
 Preparation scans the CSV twice with bounded memory and saves raw sampled rows,
 zero-based source-row indices, and source metadata in
-`data/cache/higgs-1000000-seed-2026.npz`. Loaders also prepare it automatically;
+`data/cache/higgs-2000000-seed-2026.npz`. Loaders also prepare it automatically;
 a file lock and atomic replacement protect concurrent Slurm tasks. A changed
 source path, size, or modification time invalidates the cache. Keep the original
 CSV available for source validation. `--data-home` changes the cache directory.
 
-The separate HIGGS array contains 20 tasks: four gammas × five seeds (42–46),
+The separate HIGGS array contains four tasks: four gammas × one seed (42),
 each running fixed guidance and no guidance for 200 epochs. It requests 32 GB
 host memory and keeps the existing GPU and time limit. Results go under
-`runs/gamma_sweep_200/gamma-<value>/higgs/seed-<seed>/` and are picked up by the
-existing analysis and graphs. The original Slurm script is unchanged.
+`runs/higgs_2m_200/gamma-<value>/higgs/seed-42/`, separately from earlier
+one-million-row results. The original Slurm script is unchanged. This is an
+exploratory large-scale case study; one seed cannot establish robustness across
+initializations. Existing submitted jobs retain their original settings.
+
+Analyze or graph these results by pointing the existing tools at the new root:
+
+```bash
+python -m adapative_gating_research.experiment_1.analyze \
+  --input adapative_gating_research/experiment_1/runs/higgs_2m_200/gamma-0.01
+python -m adapative_gating_research.experiment_1.graphs \
+  --input adapative_gating_research/experiment_1/runs/higgs_2m_200
+```
+
+The new subset size produces a separate cache; the old cache is preserved.
+Preparing it requires access to the original CSV and scans that file again.
 
 The Slurm array runs the fixed 0.5 gate against no guidance for four datasets,
 five paired seeds (42–46), and four adjustment strengths: 0.001, 0.01, 0.05,

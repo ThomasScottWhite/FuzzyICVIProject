@@ -1,7 +1,7 @@
 #!/bin/bash -l
 #SBATCH --job-name=dmsc-rq1-higgs
 #SBATCH --partition=requeue
-#SBATCH --array=0-19%2
+#SBATCH --array=0-3%2
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=4
@@ -12,10 +12,11 @@
 
 set -euo pipefail
 
-# Four gamma values x HIGGS only x five seeds. Each task runs both conditions.
+# Four gamma values x HIGGS (2 million rows) x one seed at 200 epochs.
+# Each task runs both conditions with a matched seed.
 gammas=(0.001 0.01 0.05 0.1)
 datasets=(higgs)
-seeds=(42 43 44 45 46)
+seeds=(42)
 task=${SLURM_ARRAY_TASK_ID:?Submit this script with sbatch}
 per_gamma=$((${#datasets[@]} * ${#seeds[@]}))
 gamma=${gammas[$((task / per_gamma))]}
@@ -38,5 +39,8 @@ python -m adapative_gating_research.experiment_1.run \
     --dataset "$dataset" \
     --seed "$seed" \
     --gamma "$gamma" \
-    --output "adapative_gating_research/experiment_1/runs/gamma_sweep_200/gamma-$gamma" \
+    --epochs 200 \
+    --evaluation-interval 10 \
+    --reference-size 5000 \
+    --output "adapative_gating_research/experiment_1/runs/higgs_2m_200/gamma-$gamma" \
     --device cuda:0

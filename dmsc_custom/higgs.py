@@ -11,7 +11,7 @@ import tempfile
 
 import numpy as np
 
-SAMPLE_SIZE = 1_000_000
+SAMPLE_SIZE = 2_000_000
 SAMPLE_SEED = 2026
 DEFAULT_SOURCE = Path(__file__).resolve().parents[1] / "data" / "HIGGS.csv"
 
